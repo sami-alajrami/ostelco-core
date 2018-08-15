@@ -12,7 +12,8 @@ jobs:
       - run:
           name: deploy utilities to the dev cluster
           command: |
-            helmsman --debug --apply -f .circleci/helmsman-dev-deployment.toml
+            cd .circleci
+            helmsman --debug --apply -f helmsman-dev-deployment.toml
 
 workflows:
   version: 2
