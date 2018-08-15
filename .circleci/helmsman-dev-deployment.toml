@@ -27,8 +27,6 @@ storageBackend = "secret" # default is configMap
   [namespaces.kube-system]
   protected = true
   [namespaces.neo4j]
-   installTiller = true
-   tillerServiceAccount = "tiller-neo4j" 
 
 
 # define any private/public helm charts repos you would like to get charts from
@@ -74,5 +72,5 @@ ostelco="https://storage.googleapis.com/pi-ostelco-helm-charts-repo/"
     priority = -7 
     wait = true
     test = true
-    protected = false
+    protected = true
  
