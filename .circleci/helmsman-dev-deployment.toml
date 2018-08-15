@@ -71,6 +71,6 @@ ostelco="https://storage.googleapis.com/pi-ostelco-helm-charts-repo/"
     valuesFile = "apps/neo4j-values.yaml"
     priority = -7 
     wait = true
-    test = true
+    test = false
     protected = true
  
