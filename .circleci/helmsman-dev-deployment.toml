@@ -75,15 +75,4 @@ ostelco="https://storage.googleapis.com/pi-ostelco-helm-charts-repo/"
     wait = true
     test = true
     protected = true
-
-    [apps.prime]
-    name = "prime"
-    description = "Prime deployment"
-    namespace = "dev"
-    enabled = true
-    chart = "ostelco/prime"
-    version = "0.2.1"
-    valuesFile = "prime-values.yaml"
-    priority = -6 
-    protected = true
  

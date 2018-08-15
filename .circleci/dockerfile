@@ -1,0 +1,5 @@
+FROM fedora
+
+#RUN pacman -Sy -q --noconfirm hub
+RUN dnf -yq install hub
+
