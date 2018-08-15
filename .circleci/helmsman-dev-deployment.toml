@@ -74,5 +74,5 @@ ostelco="https://storage.googleapis.com/pi-ostelco-helm-charts-repo/"
     priority = -7 
     wait = true
     test = true
-    protected = true
+    protected = false
  
