@@ -12,7 +12,7 @@ steps:
     env:
     - 'BUILD_ENV=CI_CD'
   - name: 'docker/compose:1.15.0'
-    args: ['up', '-d', '--build', '--abort-on-container-exit']  
+    args: ['up', '--build', '--abort-on-container-exit']  
 
 options:
  machineType: 'N1_HIGHCPU_32'
