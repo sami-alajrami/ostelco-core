@@ -2,7 +2,7 @@ steps:
   # - name: alpine
   #   args: ['sh', 'echo test && ls -l && echo test 2']
   - name: alpine
-    args: ['sh', 'ls', '-l' , '&&' , 'echo test'] 
+    args: ['ls', '-l' , '&&' , 'echo test'] 
   - name: circleci/openjdk:8u171-jdk
     args: ['bash', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
 
