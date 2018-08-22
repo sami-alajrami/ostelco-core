@@ -26,14 +26,14 @@ steps:
     - '-c'
     - |
         export PANTEL_SECRETS_FILE=$(cat pantel-prod.json)
-        chmod +x scripts/create-pantel-prod.sh
-        ./scripts/create-pantel-prod.sh
-        # for LOCATION in $(find . -name .gitignore  -exec grep pantel-prod.json  '{}' '+' ); do 
-        #   DIR_NAME=$(dirname $LOCATION)
-        #   echo "Creating secrets file: ${DIR_NAME}/pantel-prod.json ..."
-        #   echo ${PANTEL_SECRETS_FILE} | base64 -d >  ${DIR_NAME}/pantel-prod.json
-        #   ls -l ${DIR_NAME}/pantel-prod.json 
-        # done
+        # chmod +x scripts/create-pantel-prod.sh
+        # ./scripts/create-pantel-prod.sh
+        for LOCATION in $(find . -name .gitignore  -exec grep pantel-prod.json  '{}' '+' ); do 
+          DIR_NAME=$(dirname $$LOCATION)
+          echo "Creating secrets file: $${DIR_NAME}/pantel-prod.json ..."
+          echo $${PANTEL_SECRETS_FILE} | base64 -d >  $${DIR_NAME}/pantel-prod.json
+          ls -l $${DIR_NAME}/pantel-prod.json 
+        done
 
   - name: 'docker/compose:1.15.0'
     args: ['up', '--build', '--abort-on-container-exit']  
