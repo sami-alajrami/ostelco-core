@@ -5,8 +5,10 @@ steps:
   #   args: ['ls', '-l' , '&&' , 'echo test']
   - name: alpine
     args: ['ls', '-l'] 
-  - name: circleci/openjdk:8u171-jdk
-    args: ['bash', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
+  # - name: 'circleci/openjdk:8u171-jdk'
+  #   args: ['bash', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
+  - name: 'gcr.io/cloud-builders/gradle'
+    args: ['clean','build', '-x', ':neo4j-store:test']
 
 options:
  machineType: 'N1_HIGHCPU_32'
