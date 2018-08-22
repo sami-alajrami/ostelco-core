@@ -1,8 +1,8 @@
 steps: 
-  - name: circleci/openjdk:8u171-jdk
-    args: ['sh', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
   - name: alpine
-    args: ['sh', 'echo test && ls && echo test 2']  
+    args: ['sh', 'echo test && ls && echo test 2'] 
+  - name: circleci/openjdk:8u171-jdk
+    args: ['bash', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
 
 options:
  machineType: 'N1_HIGHCPU_32'
