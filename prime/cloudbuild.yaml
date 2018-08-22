@@ -1,6 +1,8 @@
 steps: 
   - name: 'gcr.io/cloud-builders/gradle'
-    args: ['clean','build']
+    args: ['clean','build', '-x', ':neo4j-store:test']
+  - name: alpine
+    args: ['sh', 'echo test && ls && echo test 2']  
 
 options:
  machineType: 'N1_HIGHCPU_32'
