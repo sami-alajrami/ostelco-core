@@ -9,6 +9,8 @@ steps:
   #   args: ['bash', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
   - name: 'gcr.io/cloud-builders/gradle'
     args: ['clean','build', '-x', ':neo4j-store:test', '-x', ':payment-processor:integration']
+    env:
+    - 'BUILD_ENV=CI_CD'
 
 options:
  machineType: 'N1_HIGHCPU_32'
