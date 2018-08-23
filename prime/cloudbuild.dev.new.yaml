@@ -34,7 +34,8 @@ steps:
     args:
     - '-c'
     - | 
-        export PANTEL_SECRETS_FILE=$(cat pantel-prod.json | base64 ) 
+        FIRBASE_SERVICE_ACCOUNT=$(cat pantel-prod.json | base64 )
+        sed -i s/PANTEL_PROD/$FIRBASE_SERVICE_ACCOUNT/g prime-dev-values.yaml
         export TAG=$SHORT_SHA
         cd prime
         helmsman --debug --verbose --apply -f helmsman-dev-deployment.toml  
