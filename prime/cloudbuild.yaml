@@ -41,7 +41,8 @@ steps:
     args: 
     - '-c'
     - |
-        wget -O ~/$${CODACY_JAR_FILE} $${CODACY_DOWNLOAD_URL}/$${CODACY_VERSION}/codacy-coverage-reporter-$${CODACY_VERSION}-assembly.jar
+        sudo wget -O ~/$${CODACY_JAR_FILE} $${CODACY_DOWNLOAD_URL}/$${CODACY_VERSION}/codacy-coverage-reporter-$${CODACY_VERSION}-assembly.jar
+        ls -l ~/
         REPORT_TARGETS=$(find . -name jacocoTestReport.xml)
             
             if [ -n "$${REPORT_TARGETS}" ]; then
