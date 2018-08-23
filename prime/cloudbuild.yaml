@@ -1,10 +1,4 @@
 steps: 
-  # - name: alpine
-  #   args: ['sh', 'echo test && ls -l && echo test 2']
-  # - name: alpine
-  #   args: ['ls', '-l' , '&&' , 'echo test']
-  - name: 'alpine'
-    args: ['ls', '-l'] 
   # - name: 'circleci/openjdk:8u171-jdk'
   #   args: ['bash', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
   - name: 'gcr.io/cloud-builders/gradle'
@@ -26,8 +20,6 @@ steps:
     - '-c'
     - |
         export PANTEL_SECRETS_FILE=$(cat pantel-prod.json)
-        # chmod +x scripts/create-pantel-prod.sh
-        # ./scripts/create-pantel-prod.sh
         for LOCATION in $(find . -name .gitignore  -exec grep pantel-prod.json  '{}' '+' ); do 
           DIR_NAME=$(dirname $$LOCATION)
           echo "Creating secrets file: $${DIR_NAME}/pantel-prod.json ..."
@@ -36,7 +28,43 @@ steps:
         done
 
   - name: 'docker/compose:1.15.0'
-    args: ['up', '--build', '--abort-on-container-exit']  
+    args: ['up', '--build', '--abort-on-container-exit'] 
+    
+  - name: 'circleci/openjdk:8u171-jdk'
+    env:
+    - 'CODACY_DOWNLOAD_URL=https://github.com/codacy/codacy-coverage-reporter/releases/download'
+    - 'CODACY_VERSION=4.0.1'
+    - 'CODACY_JAR_FILE=codacy-coverage-reporter-assembly-latest.jar'
+    - 'CODACY_MODULE=com.codacy.CodacyCoverageReporter'
+    secretEnv: ['CODACY_PROJECT_TOKEN']
+    entrypoint: 'bash'
+    args: 
+    - '-c'
+    - |
+        wget -O ~/${CODACY_JAR_FILE} $${CODACY_DOWNLOAD_URL}/$${CODACY_VERSION}/codacy-coverage-reporter-$${CODACY_VERSION}-assembly.jar
+        REPORT_TARGETS=$(find . -name jacocoTestReport.xml)
+            
+            if [ -n "$${REPORT_TARGETS}" ]; then
+              echo "Found 'jacocoTestReport.xml' file under 'build' directories in the following modules,"
+              echo ", implying - tests were run for them."
+              echo "$${REPORT_TARGETS}" ; echo 
+            else
+              echo "There were no 'build' directories found under each module." 
+              echo "This means tests were not run in the previous build job."
+            fi
+            for REPORT_TARGET in $${REPORT_TARGETS}; do
+              echo "======> Processing code-coverage report for ======> $${REPORT_TARGET} <======"
+              java -cp ~/$${CODACY_JAR_FILE} $${CODACY_MODULE} report -l Java -r $${REPORT_TARGET} --partial
+            done
+            if [ -n "$${REPORT_TARGETS}" ]; then
+              echo "======> Uploading final code-coverage report to CODACY website. <======"
+              java -cp ~/$${CODACY_JAR_FILE} $${CODACY_MODULE} final
+            else
+              echo "There were no 'jacocoTestReport.xml' files found under 'build' directories in each module." 
+              echo "This means tests were not run in the previous build job."
+              echo "... so, not uploading any code-coverage reports to CODACY website. "
+            fi
+
     
 
 options:
@@ -46,3 +74,8 @@ options:
 # - kmsKeyName: projects/[PROJECT-ID]/locations/global/keyRings/pnatel-prod-key/cryptoKeys/pantel-prod-kms-key
 #   secretEnv:
 #     PANTEL_SECRETS_FILE: CiQA7nht2HlydNa2EEOJYJAXtku2WpC6CfU6wupzsMG69+gqhkoS4hIAaYRyvCt67bWRSeMB7Jnu7bi7s342/2Ziygf0CRKIe7Idp6R6Dj8i4KUDjbhyHGVkEzz0A/2sI0iMQ18w3hSsyvbC/q27C1hWJxBvWQIa+C+iQEuSEn6knbOZBaHFITd5z1LgAbypxsOnyFxv395VV890nq4dinvTSVBiDRXlkjcZT8zAPYG0WPV/SY6pB4j0XEe5AQpa5z4rOTQ2LnUEv6PsVkV29pvpXa+wnvMuPHuOuplyZGPl1gBTvoRdOf6C2PnsFtLrJq08DwBx5A8BaIZSMfdrKaoVO0w9HnI5Ugf+tnNnpsR0AZLkn5DdY8Hxp3Qv3rWgz5Qg5qIllwT4z3PPLUOv2lHjQ0fEtHjwUwejwateATklPQHwDUhXXzImhPvZeA0I0CuOqVyjbJV/rAEHjsBULQNkVeYFg1hhDd+SqbHSAIfH0pl+k73lfgvBuO3JdUI361Or9see5NaTonBp+xfbjEO8AgNXEd3H8k775srAIcQukn9j+MJFwdql8QZA7JWqP+j18stmv18xOqYD1utewHQZoGBUtYhq44nP61jeBZBFrAkp2HPwiPbrdZ2fsEoF5eiIetDx/n0X/c93I3yW6OfOR6In2H4Zc5XzZ6JmnGPkxMOoqprr1/EVfsra7mDQ5zuR72BlDrUNHDHfRwZxcsRK4Dwg8RoWZxwhK1/hfc6gTo1pdki6KtfNGL97YTSGalPw5BRVdCrhatMY/zE9CLEsZaZREXw+aw4AA/WY9xEta6P6BOL5cv7yYyqbABpiUYbH+aS+CG3i3gv2kuSNYS2yuW59F9GqIe8NdhEuJdHq0EYoOuT3thUFBV5YSBn3uHj6MFj66YLvgwvWuP2yWGuaxQ1m0SnCPHHDgZ2FgKvy/Sc8WcxCkJ0A8ddf4sOXA0f87sBEngi5boWY03moa7lMQmn5h9beEB6NXeRsK3ay0gnzVSI0Uj+kbxOvxrZh2IHnKuTLrLuYEkTFrIhGUmxFIgxc8bC9myy3fQxuky8ZWLejiiZN0hVOmBwhqlX/Ur3+pAR+kN7QIgeQkQXDsiKKEcIrui2/i3GcfrARx8mX4TF86fyzVbCp/Bv4RtTuZHImTP0v62Y8gDa31yZJ4hzF3zcIPNc+XZx+uyTbQeV3We8Jtw5HtNV38DQA2SqMM0lNEPTzQO2qC2NBhSUvOvKvs05NFe1OsoGSfwMexWGcGcM+0Zd2NqXU0RmPir6ZRDg1TVBHsGGS4H3cyFkPhwaDcc9RAI2JMTSNalYRI0CS9AxrLhdVMWN8kEQXyq4w4RfMBF8HcDONQhYPAqDPkoCTRkdjuksZbhp6HiVxmgogvvTcs1zl+SLIaO4lYN8LQbRqlMgtIvbZ1BBiR6SkyhZtgqvUjtlzHs3Km5nY+SjVXZTtof1l7x4+0fwHDCUCt58UEhylyslbEA7AFf0eUpocQumT9YLNw07D1ZcaIgKWzAezlForj6Dmg9fydK2QN67tGT28iJRl4MKhTZgHQjrbdDwCpI1bEoGIQN+iWQyc7Pt80YgIeu5Lunnyeki3pKOeBZLz6T7FaXZ2kvrCHAx9HNBebqr0SdQ1tHsFIBQrcTmQ6FQUN1UHGSDdWJk61KygIIaxkPQXvVGbyyPvSKq41mwgfWNx5GI1dSB4xBIsek3hxprdtyn2JErCb0ab9x93ktcgCHXjqKLO6kv/cyh7MdfrMcDyTb/B4zTjoVf5MFU0qb7luSNN52FK9fQELOZExjyKGWjExSYuykZw7jI1IDJ9p/l8SzpeoFPcHzo/VhvE6dp0uduQIrs1NkkT3Oa/xbWiLpLAR+od9USHhiC9EJ8SucpBFQpWXNRz3Zy+zqjWj7yIx5PUOxxEaqUJEG0Tj69SMDki+gUIZXDmo3nY3LGuO0rlp8pfMG8Ig0cZSdsmVAds/xdMKLVz1GD4ThnBEbpcGSVYMoNPm3WO8Uuxc3uxiiWTO6TWL10WLyIFoMw9NGCSZOZac1THWZcacvxu/8dugfixVPszjVWinSF5/iBWP9TBmESrU3TyBJKfR8JHPlKEewl7RUsDrpp6RiLwgeT6oxFwQ08hExrXmD9caAJUyJk8VePjyjKsxhcalUoQ+ku7domADqoO3WyofC8x/HIuCLpDHVwtbfV+ggecvxopMbzBCZA/RPW2S0UgUTRhhAmS7UoMcpOP+XJL6Zfyvz95vXlTuTpX8JJaCfx18YBJsB2TpvNJsEeW2Kk0BssJHNylrqeuwRQJIS5zUkBN9+EO0X4f/XLVYYOgX7M/rBijALxaaWbCsATp1IkKRe9pNRSuaffB2iIlk7nKSugscYbnSaeFnraw+SdcXwQbgOic/EYPfyAYNjdaBi+ry2PjgAtL9MCliWAEvah+eplxxtQ0llBZzg4xWSafmrcfNnJWutsu4mdA8eLFSGdjMAE4LamfmckVkklwWHCeX0CJ2BSNnpqb4KaaCxeIxdgHog+0M26ySAl1xpOa2OW8TT7TZuJR6wJ6ou9ITpxou9PCIFrqrXF1d4fPbdvqYFV0D/1+xn9FYd22BqMY5U3ZBPldoqK0HnXuoKlKv7vzpOvEZCrDlXLOadm5YRcNyDOZrDtyEA0eEj6RGuXDqkNN9ir43UEYyY3xVyBn7ygXtfk9tgEaiKQb7pGNnI57orLNuElDuSKac3GMVVC0TLjNkZJPKxKNQfclpPExYjfKz94T3UGN/WV6zgl3efdY32fQQUMZmYZfw6y4v67M/7aseB7+XiWMy7MA+jdbD/ZUUZhXaSid2GmFXFi/R311BZlVFg08px8EcxyXcpMzbdvQvquj5k+v7dGHpBoN5OSnTRW2jbuLIezbIkcqzGu6W79TUxmToL1OfSRRYCdK8LvvuSqaQ79TQNx7feUC/w8P5Td+2gguH2UBczf2bcq550/qBqqxm7zlrErMJUZ2a4FU7MtytOvwxgcQmZkAIU5TbRGx7/JjO150xteFWgwMZU+7uz4zcSKtF0Ase1e8a+q7xlDVxcTMXnRXbvlOC3iPMaXB5nlb4yPGnUD6whotojBSRFPISEA38LWteepngSYIDl8T+/VZaCFjZlaommmVytkoJUOp8JxqtTEEofmMWHYjblk6PzBiS0c/gjIvRj9okpalRhICjVnuuFUFFdJOXp5ryOrlDuejOTxELd4olfVXNCZqcxOYqzwv1Bnr+aHYQEHRTSVH8ZU8uA==
+
+secrets:
+- kmsKeyName: projects/[PROJECT-ID]/locations/global/keyRings/pnatel-prod-key/cryptoKeys/pantel-prod-kms-key
+  secretEnv:
+    CODACY_PROJECT_TOKEN: CiQA7nht2OiWARZbXEeWKk6kBYzEbnvWtT3WyUJY0LUY3ogYxAoSSQBphHK8EGo7RKyY4DGW3Dv7YH58PAQMJS5YZKXvIoKsVGUhqUXZYV/YaKAZ/W1oELbemlUIgJDjogLzVoLVuKK42VEhINnYYcs=
