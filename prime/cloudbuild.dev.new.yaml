@@ -16,6 +16,19 @@ steps:
     args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA', '.']    
     dir: 'ocsgw'
 
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pantel-prod-temporary/pantel-prod.json', 'pantel-prod.json']  
+  
+  - name: 'praqma/helmsman:test-1.4.0'
+    entrypoint: 'sh'
+    args:
+    - '-c'
+    - | 
+        export PANTEL_SECRETS_FILE=$(cat pantel-prod.json)
+        export TAG=$SHORT_SHA
+        cd prime
+        helmsman --debug --apply -f helmsman-dev-deployment.toml  
+
     
 images: ['eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA','eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA' , 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA']
 options:
