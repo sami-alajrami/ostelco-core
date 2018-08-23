@@ -41,6 +41,8 @@ steps:
     args: 
     - '-c'
     - |
+        echo $$CODACY_PROJECT_TOKEN
+        sudo echo $$CODACY_PROJECT_TOKEN
         sudo wget -O ~/$${CODACY_JAR_FILE} $${CODACY_DOWNLOAD_URL}/$${CODACY_VERSION}/codacy-coverage-reporter-$${CODACY_VERSION}-assembly.jar
         REPORT_TARGETS=$(find . -name jacocoTestReport.xml)
             
