@@ -1,0 +1,19 @@
+steps: 
+  - name: 'gcr.io/cloud-builders/gradle'
+    args: ['clean','build', '-x', ':neo4j-store:test']
+    env:
+    - 'BUILD_ENV=CI_CD'
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA', '.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA', '../pseudonym-server/.']
+
+  - name: 'gcr.io/cloud-builders/docker'
+    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA', '../ocsgw/.']    
+
+    
+images: ['eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA','eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA' , 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA']
+options:
+ machineType: 'N1_HIGHCPU_32'
