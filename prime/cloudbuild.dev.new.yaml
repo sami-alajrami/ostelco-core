@@ -45,9 +45,9 @@ options:
  machineType: 'N1_HIGHCPU_32'
 
 secrets:
-- kmsKeyName: projects/pi-ostelco-dev/locations/global/keyRings/pnatel-prod-key/cryptoKeys/pantel-prod-kms-key
+- kmsKeyName: projects/pi-ostelco-dev/locations/global/keyRings/pnatel-prod-key/cryptoKeys/k8s-password-key
   secretEnv:
-    PI_DEV_K8S_PASSWORD: CiQA7nht2Ip1rVKqQWJe+nWh++1j+E7TZPzLpB1jOV+W6QHFwpISOQBphHK8ttXGSuFWq2i8AzfQXO7pQBS1ItQIL/f2zZ2COdJWya9yGBgczhsCm830QJnMG9XwZ447mg==
+    PI_DEV_K8S_PASSWORD: CiQAPK2R5KzrDwVC+VJiOiVlGZvbxaouESlYdJ3pYNS+mBqik4ASOQD5PlVZqnnwi9n4o4rlie6+DiuCCFZfcYQlPYep7uQaJSy0hfGysNrQ3jHSIo6dLYljuB6NizXghA==
 - kmsKeyName: projects/pi-ostelco-dev/locations/global/keyRings/pnatel-prod-key/cryptoKeys/pantel-prod-kms-key
   secretEnv:
     PI_DEV_K8S_ENDPOINT: CiQA7nht2F7EjdFpAOZANpG1rCBGNH24C294P3VLgyQ30vDrPTsSPwBphHK8sc+PbTAzX+IWyvFm6bylXVbP1QLE+iQx4qyVxFd6y+Wfw/9BxzY7BxpDQJRGuYaD8oFs05I+jGy53A==    
