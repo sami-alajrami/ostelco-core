@@ -6,12 +6,15 @@ steps:
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA', '.']
+    dir: 'prime'
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA', '../pseudonym-server/.']
+    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA', '.']
+    dir: 'pseudonym-server'
 
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA', '../ocsgw/.']    
+    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA', '.']    
+    dir: 'ocsgw'
 
     
 images: ['eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA','eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA' , 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA']
