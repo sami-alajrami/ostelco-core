@@ -6,9 +6,9 @@ description = "Desired state file for deploying Prime and its components."
 # paths to the certificate for connecting to the cluster
 # you have to use exact key names here : 'caCrt' for certificate and 'caKey' for the key and caClient for the client certificate
 [certificates]
-caClient = "gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_certificate.crt" 
-caCrt = "gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_cluster_ca.crt" 
-caKey = "gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_key.key" 
+caClient = "client_certificate.crt" 
+caCrt = "cluster_ca.crt" 
+caKey = "client_key.key" 
 
 [settings]
 kubeContext = "ostelco" # will try connect to this context first, if it does not exist, it will be created using the details below

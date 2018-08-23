@@ -18,8 +18,18 @@ steps:
 
   - name: gcr.io/cloud-builders/gsutil
     args: ['cp', 'gs://pantel-prod-temporary/pantel-prod.json', 'pantel-prod.json']  
+
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_certificate.crt', 'client_certificate.crt']  
+    
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_cluster_ca.crt', 'cluster_ca.crt'] 
+    
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_key.key', 'client_key.key']   
   
   - name: 'praqma/helmsman:test-1.4.0'
+    secretEnv: ['PI_DEV_K8S_PASSWORD', 'PI_DEV_K8S_ENDPOINT']
     entrypoint: 'sh'
     args:
     - '-c'
@@ -33,3 +43,11 @@ steps:
 images: ['eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA','eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA' , 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA']
 options:
  machineType: 'N1_HIGHCPU_32'
+
+secrets:
+- kmsKeyName: projects/pi-ostelco-dev/locations/global/keyRings/pnatel-prod-key/cryptoKeys/pantel-prod-kms-key
+  secretEnv:
+    PI_DEV_K8S_PASSWORD: CiQA7nht2Ip1rVKqQWJe+nWh++1j+E7TZPzLpB1jOV+W6QHFwpISOQBphHK8ttXGSuFWq2i8AzfQXO7pQBS1ItQIL/f2zZ2COdJWya9yGBgczhsCm830QJnMG9XwZ447mg==
+- kmsKeyName: projects/pi-ostelco-dev/locations/global/keyRings/pnatel-prod-key/cryptoKeys/pantel-prod-kms-key
+  secretEnv:
+    PI_DEV_K8S_ENDPOINT: CiQA7nht2F7EjdFpAOZANpG1rCBGNH24C294P3VLgyQ30vDrPTsSPwBphHK8sc+PbTAzX+IWyvFm6bylXVbP1QLE+iQx4qyVxFd6y+Wfw/9BxzY7BxpDQJRGuYaD8oFs05I+jGy53A==    
