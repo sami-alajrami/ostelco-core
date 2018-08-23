@@ -20,13 +20,13 @@ steps:
     args: ['cp', 'gs://pantel-prod-temporary/pantel-prod.json', 'pantel-prod.json']  
 
   - name: gcr.io/cloud-builders/gsutil
-    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_certificate.crt', 'client_certificate.crt']  
+    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_certificate.crt', 'prime/client_certificate.crt']  
     
   - name: gcr.io/cloud-builders/gsutil
-    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_cluster_ca.crt', 'cluster_ca.crt'] 
+    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_cluster_ca.crt', 'prime/cluster_ca.crt'] 
     
   - name: gcr.io/cloud-builders/gsutil
-    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_key.key', 'client_key.key']   
+    args: ['cp', 'gs://pi-ostelco-dev-k8s-key-store/keys/dev_cluster_client_key.key', 'prime/client_key.key']   
   
   - name: 'praqma/helmsman:test-1.4.0'
     secretEnv: ['PI_DEV_K8S_PASSWORD', 'PI_DEV_K8S_ENDPOINT']
