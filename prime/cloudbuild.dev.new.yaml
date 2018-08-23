@@ -34,7 +34,7 @@ steps:
     args:
     - '-c'
     - | 
-        export PANTEL_SECRETS_FILE=$(cat pantel-prod.json)
+        export PANTEL_SECRETS_FILE=$(cat pantel-prod.json) | base64 
         export TAG=$SHORT_SHA
         cd prime
         helmsman --debug --verbose --apply -f helmsman-dev-deployment.toml  
