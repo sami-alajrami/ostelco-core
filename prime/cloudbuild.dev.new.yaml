@@ -1,8 +1,52 @@
 steps: 
+  # Download gradle cache zip from Google Storage (GS) Bucket
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pi-ostelco-core-gradle-cache/caches.tar.gz', '/root/in_zip/']
+    volumes:
+    - name: gradle_caches_in_zip
+      path: /root/in_zip
+# Unzip gradle cache zip
+  - name: alpine
+    args: ['tar', '-xzvf', '/root/in_zip/caches.tar.gz', '-C', '/root/.gradle/caches/', '.']
+    volumes:
+    - name: gradle_caches_in_zip
+      path: /root/in_zip
+    - name: gradle_caches
+      path: /root/.gradle/caches
+  # Gradle build    
   - name: 'gcr.io/cloud-builders/gradle'
     args: ['clean','build', '-x', ':neo4j-store:test']
     env:
     - 'BUILD_ENV=CI_CD'
+    volumes:
+    - name: gradle_caches
+      path: /root/.gradle/caches
+
+  # Remove unwanted files from gradle cache
+  - name: alpine
+    args: ['rm', '-f', '/root/.gradle/caches/modules-2/modules-2.lock']
+    volumes:
+    - name: gradle_caches
+      path: /root/.gradle/caches
+  - name: alpine
+    args: ['rm', '-fr', '/root/.gradle/caches/*/plugin-resolution/']
+    volumes:
+    - name: gradle_caches
+      path: /root/.gradle/caches
+# Zip gradle cache
+  - name: alpine
+    args: ['tar', '-czvf', '/root/out_zip/caches.tar.gz', '-C', '/root/.gradle/caches', '.']
+    volumes:
+    - name: gradle_caches_out_zip
+      path: /root/out_zip
+    - name: gradle_caches
+      path: /root/.gradle/caches
+# Upload gradle cache to Google Storage (GS) Bucket
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', '/root/out_zip/caches.tar.gz', 'gs://pi-ostelco-core-gradle-cache']
+    volumes:
+    - name: gradle_caches_out_zip
+      path: /root/out_zip    
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA', '.']
