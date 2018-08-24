@@ -7,6 +7,7 @@ steps:
       path: /root/in_zip
 # Unzip gradle cache zip
   - name: alpine
+    entrypoint: 'sh'
     args: ['tar', '-xzvf', '/root/in_zip/caches.tar.gz', '-C', '/root/.gradle/caches/', '.']
     volumes:
     - name: gradle_caches_in_zip
@@ -24,17 +25,20 @@ steps:
 
   # Remove unwanted files from gradle cache
   - name: alpine
+    entrypoint: 'sh'
     args: ['rm', '-f', '/root/.gradle/caches/modules-2/modules-2.lock']
     volumes:
     - name: gradle_caches
       path: /root/.gradle/caches
   - name: alpine
+    entrypoint: 'sh'
     args: ['rm', '-fr', '/root/.gradle/caches/*/plugin-resolution/']
     volumes:
     - name: gradle_caches
       path: /root/.gradle/caches
 # Zip gradle cache
   - name: alpine
+    entrypoint: 'sh'
     args: ['tar', '-czvf', '/root/out_zip/caches.tar.gz', '-C', '/root/.gradle/caches', '.']
     volumes:
     - name: gradle_caches_out_zip
