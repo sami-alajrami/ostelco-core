@@ -7,7 +7,7 @@ steps:
       path: /root/in_zip
 # Unzip gradle cache zip
   - name: ubuntu
-    args: ['tar', '-xzvf', '/root/in_zip/caches.tar.gz', '-C', '/root/.gradle/caches/', '.']
+    args: ['tar', '-xzvf', '--warning=no-unknown-keyword', '/root/in_zip/caches.tar.gz', '-C', '/root/.gradle/caches/', '.']
     volumes:
     - name: gradle_caches_in_zip
       path: /root/in_zip
