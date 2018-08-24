@@ -34,11 +34,12 @@ steps:
     args:
     - '-c'
     - | 
+        cd prime
         FIRBASE_SERVICE_ACCOUNT=$(cat pantel-prod.json | base64 )
         sed -i "s/PANTEL_PROD/$${FIRBASE_SERVICE_ACCOUNT}/g" prime-dev-values.yaml
+        cat prime-dev-values.yaml
         export TAG=$SHORT_SHA
-        cd prime
-        helmsman --debug --verbose --apply -f helmsman-dev-deployment.toml  
+        helmsman --debug --apply -f helmsman-dev-deployment.toml  
 
     
 images: ['eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA','eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA' , 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA']
