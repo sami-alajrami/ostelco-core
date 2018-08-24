@@ -34,10 +34,9 @@ steps:
     args:
     - '-c'
     - | 
-        cd prime
         FIRBASE_SERVICE_ACCOUNT=$(cat pantel-prod.json | base64 )
+        cd prime
         sed -i "s/PANTEL_PROD/$${FIRBASE_SERVICE_ACCOUNT}/g" prime-dev-values.yaml
-        cat prime-dev-values.yaml
         export TAG=$SHORT_SHA
         helmsman --debug --apply -f helmsman-dev-deployment.toml  
 
