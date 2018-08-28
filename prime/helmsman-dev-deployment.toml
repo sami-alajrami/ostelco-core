@@ -51,4 +51,4 @@ ostelco="https://storage.googleapis.com/pi-ostelco-helm-charts-repo/"
     valuesFile = "prime-dev-values.yaml"
     [apps.prime-gcb.set]
     "prime.tag"="\"$TAG\"" # double quotes are needed to avoid helm converting git SHA into scientific numbers format 
-    "firebaseServiceAccount"="$FIRBASE_SERVICE_ACCOUNT"
+    #"firebaseServiceAccount"="$FIRBASE_SERVICE_ACCOUNT"
