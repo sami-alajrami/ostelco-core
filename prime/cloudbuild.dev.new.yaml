@@ -52,9 +52,9 @@ steps:
     args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA', '.']
     dir: 'prime'
 
-  - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA', '.']
-    dir: 'pseudonym-server'
+  # - name: 'gcr.io/cloud-builders/docker'
+  #   args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA', '.']
+  #   dir: 'pseudonym-server'
 
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA', '.']    
@@ -85,7 +85,7 @@ steps:
         helmsman --debug --verbose --apply -f helmsman-dev-deployment.toml  
 
     
-images: ['eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA','eu.gcr.io/pi-ostelco-dev/pseudonym-server:$SHORT_SHA' , 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA']
+images: ['eu.gcr.io/pi-ostelco-dev/prime:$SHORT_SHA', 'eu.gcr.io/pi-ostelco-dev/ocsgw:$SHORT_SHA']
 options:
  machineType: 'N1_HIGHCPU_32'
 

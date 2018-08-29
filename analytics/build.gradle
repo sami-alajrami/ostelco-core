@@ -1,12 +1,12 @@
 plugins {
-  id "org.jetbrains.kotlin.jvm" version "1.2.60"
+  id "org.jetbrains.kotlin.jvm" version "1.2.61"
   id "application"
   id "com.github.johnrengelman.shadow" version "2.0.4"
   id "idea"
 }
 
 dependencies {
-  implementation project(':ocs-api')
+  implementation project(':analytics-grpc-api')
   implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
   implementation "com.google.cloud:google-cloud-pubsub:$googleCloudVersion"
   implementation 'com.google.cloud.dataflow:google-cloud-dataflow-java-sdk-all:2.5.0'

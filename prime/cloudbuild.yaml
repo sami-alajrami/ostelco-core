@@ -54,11 +54,11 @@ steps:
             fi
             for REPORT_TARGET in $${REPORT_TARGETS}; do
               echo "======> Processing code-coverage report for ======> $${REPORT_TARGET} <======"
-              sudo java -cp ~/$${CODACY_JAR_FILE} $${CODACY_MODULE} report -l Java -r $${REPORT_TARGET} --partial
+              sudo java -cp ~/$${CODACY_JAR_FILE} $${CODACY_MODULE} report -l Java -r $${REPORT_TARGET} --partial -t $${CODACY_PROJECT_TOKEN}
             done
             if [ -n "$${REPORT_TARGETS}" ]; then
               echo "======> Uploading final code-coverage report to CODACY website. <======"
-              sudo java -cp ~/$${CODACY_JAR_FILE} $${CODACY_MODULE} final
+              sudo java -cp ~/$${CODACY_JAR_FILE} $${CODACY_MODULE} final -t $${CODACY_PROJECT_TOKEN}
             else
               echo "There were no 'jacocoTestReport.xml' files found under 'build' directories in each module." 
               echo "This means tests were not run in the previous build job."
