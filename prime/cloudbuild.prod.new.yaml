@@ -1,0 +1,44 @@
+steps: 
+
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pantel-prod-temp/pantel-prod.json', 'pantel-prod.json']  
+
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pi-ostelco-prod-k8s-key-store/keys/prod_cluster_client_certificate.crt', 'prime/client_certificate.crt']  
+    
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pi-ostelco-prod-k8s-key-store/keys/prod_cluster_cluster_ca.crt', 'prime/cluster_ca.crt'] 
+    
+  - name: gcr.io/cloud-builders/gsutil
+    args: ['cp', 'gs://pi-ostelco-prod-k8s-key-store/keys/prod_cluster_client_key.key', 'prime/client_key.key']   
+  
+  - name: gcr.io/cloud-builders/git
+    entrypoint: 'bash'
+    args: 
+    - '-c'
+    - |
+        echo $(git rev-parse --short=9 origin/gcb-dev) > tag.txt
+  
+  - name: 'praqma/helmsman:test-1.4.0'
+    secretEnv: ['PI_PROD_K8S_PASSWORD', 'PI_PROD_K8S_ENDPOINT']
+    entrypoint: 'sh'
+    args:
+    - '-c'
+    - | 
+        export FIREBASE_SERVICE_ACCOUNT=$(cat pantel-prod.json | base64 )
+        cd prime
+        sed -i "s/PANTEL_PROD/$${FIREBASE_SERVICE_ACCOUNT}/g" prime-prod-values.yaml
+        export TAG=$(cat tag.txt)
+        helmsman --debug --apply -f helmsman-prod-deployment.toml  
+
+    
+options:
+ machineType: 'N1_HIGHCPU_32'
+
+secrets:
+- kmsKeyName: projects/pi-ostelco-prod/locations/global/keyRings/pantel-prod-keyring/cryptoKeys/k8s-password-key
+  secretEnv:
+    PI_PROD_K8S_PASSWORD: CiQAK3Wr2zDd6V8NZ23w1LlcdFml+F7ENHMSv1CoP2Fhlrx81MQSOADW+uduAhIN4IcUbnfSj3XNkQuxnQvi8rtBQhTGldkSQB9jDLSa7RBaufXk4TDnG9ZPaf+NBwwh
+- kmsKeyName: projects/pi-ostelco-prod/locations/global/keyRings/pantel-prod-keyring/cryptoKeys/k8s-endpoint-key
+  secretEnv:
+    PI_PROD_K8S_ENDPOINT: CiQAW4LXxJcFVhEZk67uM985HzBP8FH47yt8zcG+mHmN2mn3PI8SPgDvhrODUBCM2JVJP5fSpiJofefRL5O05KxnyPKpbU9F8gQwNK9B/UU0EbhN48BkEi4Ph/F1/OB21yV2xVa5    
