@@ -25,8 +25,8 @@ steps:
           ls -l $${DIR_NAME}/pantel-prod.json 
         done
 
-  - name: 'docker/compose:1.15.0'
-    args: ['up', '--build', '--abort-on-container-exit'] 
+  # - name: 'docker/compose:1.15.0'
+  #   args: ['up', '--build', '--abort-on-container-exit'] 
     
   - name: 'circleci/openjdk:8u171-jdk'
     env:
