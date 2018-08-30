@@ -1,6 +1,4 @@
 steps: 
-  # - name: 'circleci/openjdk:8u171-jdk'
-  #   args: ['bash', './gradlew' ,'clean','build', '-x', ':neo4j-store:test']
   - name: 'gcr.io/cloud-builders/gradle'
     args: ['clean','build', '-x', ':neo4j-store:test']
     env:
